@@ -1,0 +1,18 @@
+version: '3.4'
+
+services:
+  shopping.api:
+    image: ${DOCKER_REGISTRY-}shoppingapi
+    build:
+      context: .
+      dockerfile: Shopping.Api/Dockerfile
+
+  jluecom.web:
+    image: ${DOCKER_REGISTRY-}jluecomweb
+    build:
+      context: .
+      dockerfile: JluEcom.Web/Dockerfile
+
+  shopping.db:
+    image: mongo
+

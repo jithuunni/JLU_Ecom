@@ -1,11 +1,10 @@
-﻿using JluEcom.Web.Data;
-using JluEcom.Web.Models;
+﻿using JluEcom.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace JluEcom.Web.Controllers
@@ -13,15 +12,21 @@ namespace JluEcom.Web.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly HttpClient httpClient;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
+            httpClient = httpClientFactory.CreateClient("ShoppingApiClient");
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View(ProductContext.Products);
+            var response = await httpClient.GetAsync("/products");
+            string content = await response.Content.ReadAsStringAsync();
+            var products = JsonConvert.DeserializeObject<IEnumerable<Product>>(content);
+
+            return View(products);
         }
 
         public IActionResult Privacy()
